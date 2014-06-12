@@ -39,8 +39,8 @@ be as expected. (Some text would break TeX processing altogther, see below.)
 for these arrows, size selection and bounding box won't work
 
 -the rounded corners for polyline-paths are slightly different:
-	the radius measure is not the radius of the arc,
-	but the length cut off at the angle from each segment of the polyline
+  the radius measure is not the radius of the arc,
+  but the length cut off at the angle from each segment of the polyline
 however the PGF native corner rounding was implemented, since I observed a discontinuous
 line thickness at the interface between the segments and arcs
 
@@ -74,9 +74,9 @@ TODO:
 #define POINTS_in_INCH 28.346
 #define DTOSTR_BUF_SIZE G_ASCII_DTOSTR_BUF_SIZE
 #define pgf_dtostr(buf,d) \
-	g_ascii_formatd(buf,sizeof(buf),"%f",d)
+  g_ascii_formatd(buf,sizeof(buf),"%f",d)
 #define pgf_itostr(buf,i) \
-	g_sprintf(buf,"%d",i)
+  g_sprintf(buf,"%d",i)
 
 static void begin_render(DiaRenderer *self, const Rectangle *update);
 static void end_render(DiaRenderer *self);
@@ -86,54 +86,54 @@ static void set_linejoin(DiaRenderer *self, LineJoin mode);
 static void set_linestyle(DiaRenderer *self, LineStyle mode, real dash_length);
 static void set_fillstyle(DiaRenderer *self, FillStyle mode);
 static void set_font(DiaRenderer *self, DiaFont *font, real height);
-static void draw_line(DiaRenderer *self, 
-		      Point *start, Point *end, 
-		      Color *line_color);
-static void draw_polyline(DiaRenderer *self, 
-			  Point *points, int num_points, 
-			  Color *line_color);
+static void draw_line(DiaRenderer *self,
+          Point *start, Point *end,
+          Color *line_color);
+static void draw_polyline(DiaRenderer *self,
+        Point *points, int num_points,
+        Color *line_color);
 static void draw_rounded_polyline (DiaRenderer *self,
                         Point *points, int num_points,
                         Color *color, real radius);
-static void draw_polygon(DiaRenderer *self, 
-			 Point *points, int num_points, 
-			 Color *fill, Color *stroke);
-static void draw_rounded_rect(DiaRenderer *self, 
-			      Point *ul_corner, Point *lr_corner,
-			      Color *fill, Color *stroke, real radius);
-static void draw_arc(DiaRenderer *self, 
-		     Point *center,
-		     real width, real height,
-		     real angle1, real angle2,
-		     Color *color);
-static void fill_arc(DiaRenderer *self, 
-		     Point *center,
-		     real width, real height,
-		     real angle1, real angle2,
-		     Color *color);
-static void draw_ellipse(DiaRenderer *self, 
-			 Point *center,
-			 real width, real height,
-			 Color *fill, Color *stroke);
-static void draw_bezier(DiaRenderer *self, 
-			BezPoint *points,
-			int numpoints,
-			Color *color);
-static void draw_beziergon(DiaRenderer *self, 
-			   BezPoint *points,
-			   int numpoints,
-			   Color *fill,
-			   Color *stroke);
+static void draw_polygon(DiaRenderer *self,
+       Point *points, int num_points,
+       Color *fill, Color *stroke);
+static void draw_rounded_rect(DiaRenderer *self,
+            Point *ul_corner, Point *lr_corner,
+            Color *fill, Color *stroke, real radius);
+static void draw_arc(DiaRenderer *self,
+         Point *center,
+         real width, real height,
+         real angle1, real angle2,
+         Color *color);
+static void fill_arc(DiaRenderer *self,
+         Point *center,
+         real width, real height,
+         real angle1, real angle2,
+         Color *color);
+static void draw_ellipse(DiaRenderer *self,
+       Point *center,
+       real width, real height,
+       Color *fill, Color *stroke);
+static void draw_bezier(DiaRenderer *self,
+      BezPoint *points,
+      int numpoints,
+      Color *color);
+static void draw_beziergon(DiaRenderer *self,
+         BezPoint *points,
+         int numpoints,
+         Color *fill,
+         Color *stroke);
 static void draw_string(DiaRenderer *self,
-			const char *text,
-			Point *pos, Alignment alignment,
-			Color *color);
+      const char *text,
+      Point *pos, Alignment alignment,
+      Color *color);
 static void draw_image(DiaRenderer *self,
-		       Point *point,
-		       real width, real height,
-		       DiaImage *image);
-  
-static void draw_line_with_arrows(DiaRenderer *renderer, Point *start, Point *end, 
+           Point *point,
+           real width, real height,
+           DiaImage *image);
+
+static void draw_line_with_arrows(DiaRenderer *renderer, Point *start, Point *end,
                                   real line_width, Color *line_color,
                                   Arrow *start_arrow, Arrow *end_arrow);
 static void draw_arc_with_arrows(DiaRenderer *renderer, Point *start, Point *end, Point *midpoint,
@@ -142,29 +142,29 @@ static void draw_arc_with_arrows(DiaRenderer *renderer, Point *start, Point *end
 static void draw_polyline_with_arrows(DiaRenderer *renderer, Point *points, int num_points,
                                      real line_width, Color *color,
                                      Arrow *start_arrow, Arrow *end_arrow);
-static void draw_rounded_polyline_with_arrows(DiaRenderer *renderer, 
-                                     Point *points, int num_points, real line_width, Color *color, 
-				     Arrow *start_arrow, Arrow *end_arrow, real radius);
+static void draw_rounded_polyline_with_arrows(DiaRenderer *renderer,
+                                     Point *points, int num_points, real line_width, Color *color,
+             Arrow *start_arrow, Arrow *end_arrow, real radius);
 static void draw_bezier_with_arrows(DiaRenderer *renderer, BezPoint *points, int num_points,
                                    real line_width, Color *color,
                                    Arrow *start_arrow, Arrow *end_arrow);
 
 /*store the higher level arrow functions for arrows not (yet) implemented in this PGF macro*/
-void (*orig_draw_line_with_arrows)  (DiaRenderer *renderer, Point *start, Point *end, 
+void (*orig_draw_line_with_arrows)  (DiaRenderer *renderer, Point *start, Point *end,
                                   real line_width, Color *line_color,
                                   Arrow *start_arrow, Arrow *end_arrow);
-  
+
 void (*orig_draw_arc_with_arrows)  (DiaRenderer *renderer, Point *start, Point *end, Point *midpoint,
                                  real line_width, Color *color,
                                  Arrow *start_arrow, Arrow *end_arrow);
-  
+
 void (*orig_draw_polyline_with_arrows) (DiaRenderer *renderer, Point *points, int num_points,
                                      real line_width, Color *color,
                                      Arrow *start_arrow, Arrow *end_arrow);
-  
-void (*orig_draw_rounded_polyline_with_arrows) (DiaRenderer *renderer, 
-                                     Point *points, int num_points, real line_width, Color *color, 
-				     Arrow *start_arrow, Arrow *end_arrow, real radius);
+
+void (*orig_draw_rounded_polyline_with_arrows) (DiaRenderer *renderer,
+                                     Point *points, int num_points, real line_width, Color *color,
+             Arrow *start_arrow, Arrow *end_arrow, real radius);
 
 void (*orig_draw_bezier_with_arrows) (DiaRenderer *renderer, BezPoint *points, int num_points,
                                    real line_width, Color *color,
@@ -181,7 +181,7 @@ void (*orig_draw_bezier_with_arrows) (DiaRenderer *renderer, BezPoint *points, i
  *
  * \memberof _PgfRenderer
  */
-static gboolean 
+static gboolean
 is_capable_to (DiaRenderer *renderer, RenderCapability cap)
 {
   if (RENDER_HOLES == cap)
@@ -216,14 +216,14 @@ pgf_renderer_get_type (void)
         NULL,           /* class_data */
         sizeof (PgfRenderer),
         0,              /* n_preallocs */
-	NULL            /* init */
+  NULL            /* init */
       };
 
       object_type = g_type_register_static (DIA_TYPE_RENDERER,
                                             "PGFRenderer",
                                             &object_info, 0);
     }
-  
+
   return object_type;
 }
 
@@ -253,16 +253,16 @@ pgf_renderer_class_init (PgfRendererClass *klass)
   renderer_class->set_linestyle = set_linestyle;
   renderer_class->set_fillstyle = set_fillstyle;
   renderer_class->set_font = set_font;
-  
+
   renderer_class->draw_line = draw_line;
   renderer_class->draw_polyline = draw_polyline;
 
   /*problem: the round angles behave slightly differently under PGF:
-	the radius measure is not the radius, but the length cut off at the angle
-	from each segment of the polyline
-	however, to keep the inherited round corner generation, this command can be commented out*/  
+  the radius measure is not the radius, but the length cut off at the angle
+  from each segment of the polyline
+  however, to keep the inherited round corner generation, this command can be commented out*/
   renderer_class->draw_rounded_polyline = draw_rounded_polyline;
-  
+
   renderer_class->draw_polygon = draw_polygon;
 
   renderer_class->draw_rounded_rect = draw_rounded_rect;
@@ -286,14 +286,14 @@ pgf_renderer_class_init (PgfRendererClass *klass)
   renderer_class->draw_rounded_polyline_with_arrows = draw_rounded_polyline_with_arrows;
   orig_draw_bezier_with_arrows = renderer_class->draw_bezier_with_arrows;
   renderer_class->draw_bezier_with_arrows = draw_bezier_with_arrows;
-  
+
   renderer_class->draw_string = draw_string;
 
   renderer_class->draw_image = draw_image;
 }
 
 
-static void 
+static void
 set_line_color(PgfRenderer *renderer,Color *color)
 {
     gchar red_buf[DTOSTR_BUF_SIZE];
@@ -301,15 +301,15 @@ set_line_color(PgfRenderer *renderer,Color *color)
     gchar blue_buf[DTOSTR_BUF_SIZE];
 
     fprintf(renderer->file, "\\definecolor{dialinecolor}{rgb}{%s, %s, %s}\n",
-	    pgf_dtostr(red_buf, (gdouble) color->red),
-	    pgf_dtostr(green_buf, (gdouble) color->green),
-	    pgf_dtostr(blue_buf, (gdouble) color->blue) );
+      pgf_dtostr(red_buf, (gdouble) color->red),
+      pgf_dtostr(green_buf, (gdouble) color->green),
+      pgf_dtostr(blue_buf, (gdouble) color->blue) );
     fprintf(renderer->file,"\\pgfsetstrokecolor{dialinecolor}\n");
     fprintf(renderer->file,"\\pgfsetstrokeopacity{%s}\n",
-	    pgf_dtostr(red_buf, (gdouble) color->alpha));
+      pgf_dtostr(red_buf, (gdouble) color->alpha));
 }
 
-static void 
+static void
 set_fill_color(PgfRenderer *renderer,Color *color)
 {
     gchar red_buf[DTOSTR_BUF_SIZE];
@@ -317,12 +317,12 @@ set_fill_color(PgfRenderer *renderer,Color *color)
     gchar blue_buf[DTOSTR_BUF_SIZE];
 
     fprintf(renderer->file, "\\definecolor{diafillcolor}{rgb}{%s, %s, %s}\n",
-	    pgf_dtostr(red_buf, (gdouble) color->red),
-	    pgf_dtostr(green_buf, (gdouble) color->green),
-	    pgf_dtostr(blue_buf, (gdouble) color->blue) );
+      pgf_dtostr(red_buf, (gdouble) color->red),
+      pgf_dtostr(green_buf, (gdouble) color->green),
+      pgf_dtostr(blue_buf, (gdouble) color->blue) );
     fprintf(renderer->file,"\\pgfsetfillcolor{diafillcolor}\n");
     fprintf(renderer->file,"\\pgfsetfillopacity{%s}\n",
-	    pgf_dtostr(red_buf, (gdouble) color->alpha));
+      pgf_dtostr(red_buf, (gdouble) color->alpha));
 }
 
 static void
@@ -334,7 +334,7 @@ static void
 end_render(DiaRenderer *self)
 {
     PgfRenderer *renderer = PGF_RENDERER(self);
-  
+
     fprintf(renderer->file,"\\end{tikzpicture}\n");
     fclose(renderer->file);
 }
@@ -347,26 +347,26 @@ set_linewidth(DiaRenderer *self, real linewidth)
 
 
     fprintf(renderer->file, "\\pgfsetlinewidth{%s\\du}\n",
-	    pgf_dtostr(d_buf, (gdouble) linewidth) );
+      pgf_dtostr(d_buf, (gdouble) linewidth) );
 }
 
 static void
 set_linecaps(DiaRenderer *self, LineCaps mode)
 {
     PgfRenderer *renderer = PGF_RENDERER(self);
-  
+
     switch(mode) {
     case LINECAPS_BUTT:
-	fprintf(renderer->file, "\\pgfsetbuttcap\n");
-	break;
+  fprintf(renderer->file, "\\pgfsetbuttcap\n");
+  break;
     case LINECAPS_ROUND:
-	fprintf(renderer->file, "\\pgfsetroundcap\n");
-	break;
+  fprintf(renderer->file, "\\pgfsetroundcap\n");
+  break;
     case LINECAPS_PROJECTING:
-	fprintf(renderer->file, "\\pgfsetrectcap\n");
-	break;
+  fprintf(renderer->file, "\\pgfsetrectcap\n");
+  break;
     default:
-	fprintf(renderer->file, "\\pgfsetbuttcap\n");
+  fprintf(renderer->file, "\\pgfsetbuttcap\n");
     }
 
 }
@@ -376,19 +376,19 @@ set_linejoin(DiaRenderer *self, LineJoin mode)
 {
     PgfRenderer *renderer = PGF_RENDERER(self);
     /* int ps_mode; */
-  
+
     switch(mode) {
     case LINEJOIN_MITER:
-	fprintf(renderer->file, "\\pgfsetmiterjoin\n");
-	break;
+  fprintf(renderer->file, "\\pgfsetmiterjoin\n");
+  break;
     case LINEJOIN_ROUND:
-	fprintf(renderer->file, "\\pgfsetroundjoin\n");
-	break;
+  fprintf(renderer->file, "\\pgfsetroundjoin\n");
+  break;
     case LINEJOIN_BEVEL:
-	fprintf(renderer->file, "\\pgfsetbeveljoin\n");
-	break;
+  fprintf(renderer->file, "\\pgfsetbeveljoin\n");
+  break;
     default:
-	fprintf(renderer->file, "\\pgfsetmiterjoin\n");
+  fprintf(renderer->file, "\\pgfsetmiterjoin\n");
     }
 
 }
@@ -404,48 +404,48 @@ set_linestyle(DiaRenderer *self, LineStyle mode, real dash_length)
     real dot_length;
 
     if (dash_length<0.001)
-	dash_length = 0.001;
+  dash_length = 0.001;
     /* dot = 20% of len - elsewhere 10% */
     dot_length = dash_length * 0.2;
 
     switch(mode) {
     case LINESTYLE_SOLID:
-	fprintf(renderer->file, "\\pgfsetdash{}{0pt}\n");
-	break;
+  fprintf(renderer->file, "\\pgfsetdash{}{0pt}\n");
+  break;
     case LINESTYLE_DASHED:
-	pgf_dtostr(dash_length_buf, dash_length);
-	fprintf(renderer->file, "\\pgfsetdash{{%s\\du}{%s\\du}}{0\\du}\n", 
-		dash_length_buf,
-		dash_length_buf);
-	break;
+  pgf_dtostr(dash_length_buf, dash_length);
+  fprintf(renderer->file, "\\pgfsetdash{{%s\\du}{%s\\du}}{0\\du}\n",
+    dash_length_buf,
+    dash_length_buf);
+  break;
     case LINESTYLE_DASH_DOT:
-	hole_width = ( dash_length -  dot_length) / 2.0;
-	pgf_dtostr(hole_width_buf,hole_width);
-	pgf_dtostr(dot_length_buf, dot_length);
-	pgf_dtostr(dash_length_buf, dash_length);
-	fprintf(renderer->file, "\\pgfsetdash{{%s\\du}{%s\\du}{%s\\du}{%s\\du}}{0cm}\n",
-		dash_length_buf,
-		hole_width_buf,
-		dot_length_buf,
-		hole_width_buf );
-	break;
+  hole_width = ( dash_length -  dot_length) / 2.0;
+  pgf_dtostr(hole_width_buf,hole_width);
+  pgf_dtostr(dot_length_buf, dot_length);
+  pgf_dtostr(dash_length_buf, dash_length);
+  fprintf(renderer->file, "\\pgfsetdash{{%s\\du}{%s\\du}{%s\\du}{%s\\du}}{0cm}\n",
+    dash_length_buf,
+    hole_width_buf,
+    dot_length_buf,
+    hole_width_buf );
+  break;
     case LINESTYLE_DASH_DOT_DOT:
-	hole_width = ( dash_length - 2.0* dot_length) / 3.0;
-	pgf_dtostr(hole_width_buf,hole_width);
-	pgf_dtostr(dot_length_buf, dot_length);
-	pgf_dtostr(dash_length_buf, dash_length);
-	fprintf(renderer->file, "\\pgfsetdash{{%s\\du}{%s\\du}{%s\\du}{%s\\du}{%s\\du}{%s\\du}}{0cm}\n",
-		dash_length_buf,
-		hole_width_buf,
-		dot_length_buf,
-		hole_width_buf,
-		dot_length_buf,
-		hole_width_buf );
-	break;
+  hole_width = ( dash_length - 2.0* dot_length) / 3.0;
+  pgf_dtostr(hole_width_buf,hole_width);
+  pgf_dtostr(dot_length_buf, dot_length);
+  pgf_dtostr(dash_length_buf, dash_length);
+  fprintf(renderer->file, "\\pgfsetdash{{%s\\du}{%s\\du}{%s\\du}{%s\\du}{%s\\du}{%s\\du}}{0cm}\n",
+    dash_length_buf,
+    hole_width_buf,
+    dot_length_buf,
+    hole_width_buf,
+    dot_length_buf,
+    hole_width_buf );
+  break;
     case LINESTYLE_DOTTED:
-	pgf_dtostr(dot_length_buf, dot_length);
-	fprintf(renderer->file, "\\pgfsetdash{{\\pgflinewidth}{%s\\du}}{0cm}\n", dot_length_buf);
-	break;
+  pgf_dtostr(dot_length_buf, dot_length);
+  fprintf(renderer->file, "\\pgfsetdash{{\\pgflinewidth}{%s\\du}}{0cm}\n", dot_length_buf);
+  break;
     }
 }
 
@@ -454,10 +454,10 @@ set_fillstyle(DiaRenderer *self, FillStyle mode)
 {
     switch(mode) {
     case FILLSTYLE_SOLID:
-	break;
+  break;
     default:
-	g_warning ("%s: Unsupported fill mode specified!",
-		   G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS (self)));
+  g_warning ("%s: Unsupported fill mode specified!",
+       G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS (self)));
     }
 }
 
@@ -471,9 +471,9 @@ set_font(DiaRenderer *self, DiaFont *font, real height)
 }
 
 static void
-draw_line(DiaRenderer *self, 
-	  Point *start, Point *end, 
-	  Color *line_color)
+draw_line(DiaRenderer *self,
+    Point *start, Point *end,
+    Color *line_color)
 {
     PgfRenderer *renderer = PGF_RENDERER(self);
     gchar sx_buf[DTOSTR_BUF_SIZE];
@@ -484,57 +484,57 @@ draw_line(DiaRenderer *self,
     set_line_color(renderer,line_color);
 
     fprintf(renderer->file, "\\draw (%s\\du,%s\\du)--(%s\\du,%s\\du);\n",
-	    pgf_dtostr(sx_buf,start->x),
-	    pgf_dtostr(sy_buf,start->y),
-	    pgf_dtostr(ex_buf,end->x),
-	    pgf_dtostr(ey_buf,end->y) );
+      pgf_dtostr(sx_buf,start->x),
+      pgf_dtostr(sy_buf,start->y),
+      pgf_dtostr(ex_buf,end->x),
+      pgf_dtostr(ey_buf,end->y) );
 }
 
 static void
-draw_polyline(DiaRenderer *self, 
-	      Point *points, int num_points, 
-	      Color *line_color)
+draw_polyline(DiaRenderer *self,
+        Point *points, int num_points,
+        Color *line_color)
 {
     PgfRenderer *renderer = PGF_RENDERER(self);
     int i;
     gchar px_buf[DTOSTR_BUF_SIZE];
     gchar py_buf[DTOSTR_BUF_SIZE];
-  
-    set_line_color(renderer,line_color);  
+
+    set_line_color(renderer,line_color);
     fprintf(renderer->file, "\\draw (%s\\du,%s\\du)",
-	    pgf_dtostr(px_buf,points[0].x),
-	    pgf_dtostr(py_buf,points[0].y) );
+      pgf_dtostr(px_buf,points[0].x),
+      pgf_dtostr(py_buf,points[0].y) );
 
     for (i=1;i<num_points;i++) {
-	fprintf(renderer->file, "--(%s\\du,%s\\du)",
-		pgf_dtostr(px_buf,points[i].x),
-		pgf_dtostr(py_buf,points[i].y) );
+  fprintf(renderer->file, "--(%s\\du,%s\\du)",
+    pgf_dtostr(px_buf,points[i].x),
+    pgf_dtostr(py_buf,points[i].y) );
     }
 
     fprintf(renderer->file, ";\n");
 }
 
 /*problem: the round angles behave slightly differently under PGF:
-	the radius measure is not the radius, but the length cut off at the angle
-	from each segment of the polyline*/
+  the radius measure is not the radius, but the length cut off at the angle
+  from each segment of the polyline*/
 static void draw_rounded_polyline (DiaRenderer *self,
                         Point *points, int num_points,
                         Color *color, real radius)
 {
-	gchar rad_buf[DTOSTR_BUF_SIZE];
-	
-	PgfRenderer *renderer = PGF_RENDERER(self);
-	pgf_dtostr(rad_buf, (gdouble) radius);
-	fprintf(renderer->file, "{\\pgfsetcornersarced{\\pgfpoint{%s\\du}{%s\\du}}",
-					rad_buf, rad_buf);
-	draw_polyline(self,points,num_points,color);
-	fprintf(renderer->file, "}");
+  gchar rad_buf[DTOSTR_BUF_SIZE];
+
+  PgfRenderer *renderer = PGF_RENDERER(self);
+  pgf_dtostr(rad_buf, (gdouble) radius);
+  fprintf(renderer->file, "{\\pgfsetcornersarced{\\pgfpoint{%s\\du}{%s\\du}}",
+          rad_buf, rad_buf);
+  draw_polyline(self,points,num_points,color);
+  fprintf(renderer->file, "}");
 }
 
 static void
 pgf_polygon(PgfRenderer *renderer,
-		 Point *points, gint num_points,
-		 Color *line_color, gboolean filled)
+     Point *points, gint num_points,
+     Color *line_color, gboolean filled)
 {
     gint i;
     gchar px_buf[DTOSTR_BUF_SIZE];
@@ -542,25 +542,25 @@ pgf_polygon(PgfRenderer *renderer,
 
     if (!filled) {set_line_color(renderer,line_color);}
     else {set_fill_color(renderer,line_color);}
-    	
-    
+
+
     fprintf(renderer->file, "\\%s (%s\\du,%s\\du)",
-	    (filled?"fill":"draw"),
-	    pgf_dtostr(px_buf,points[0].x),
-	    pgf_dtostr(py_buf,points[0].y) );
-    
+      (filled?"fill":"draw"),
+      pgf_dtostr(px_buf,points[0].x),
+      pgf_dtostr(py_buf,points[0].y) );
+
     for (i=1;i<num_points;i++) {
-	fprintf(renderer->file, "--(%s\\du,%s\\du)",
-		pgf_dtostr(px_buf,points[i].x),
-		pgf_dtostr(py_buf,points[i].y) );
+  fprintf(renderer->file, "--(%s\\du,%s\\du)",
+    pgf_dtostr(px_buf,points[i].x),
+    pgf_dtostr(py_buf,points[i].y) );
     }
     fprintf(renderer->file,"--cycle;\n");
 }
 
 static void
-draw_polygon(DiaRenderer *self, 
-	     Point *points, int num_points, 
-	     Color *fill, Color *stroke)
+draw_polygon(DiaRenderer *self,
+       Point *points, int num_points,
+       Color *fill, Color *stroke)
 {
     PgfRenderer *renderer = PGF_RENDERER(self);
 
@@ -573,8 +573,8 @@ draw_polygon(DiaRenderer *self,
 
 static void
 pgf_rect(PgfRenderer *renderer,
-	      Point *ul_corner, Point *lr_corner,
-	      Color *color, gboolean filled)
+        Point *ul_corner, Point *lr_corner,
+        Color *color, gboolean filled)
 {
     gchar ulx_buf[DTOSTR_BUF_SIZE];
     gchar uly_buf[DTOSTR_BUF_SIZE];
@@ -588,61 +588,61 @@ pgf_rect(PgfRenderer *renderer,
     pgf_dtostr(uly_buf, (gdouble) ul_corner->y);
     pgf_dtostr(lrx_buf, (gdouble) lr_corner->x);
     pgf_dtostr(lry_buf, (gdouble) lr_corner->y);
-    
+
     fprintf(renderer->file, "\\%s (%s\\du,%s\\du)--(%s\\du,%s\\du)--(%s\\du,%s\\du)--(%s\\du,%s\\du)--cycle;\n",
-	    (filled?"fill":"draw"),
-	    ulx_buf, uly_buf,
-	    ulx_buf, lry_buf,
-	    lrx_buf, lry_buf,
-	    lrx_buf, uly_buf );
-}
-
-static void 
-stroke_rounded_rect(DiaRenderer *self, 
-			      Point *ul_corner, Point *lr_corner,
-			      Color *color, real radius)
-{
-	gchar rad_buf[DTOSTR_BUF_SIZE];
-	
-	PgfRenderer *renderer = PGF_RENDERER(self);
-	pgf_dtostr(rad_buf, (gdouble) radius);
-	fprintf(renderer->file, "{\\pgfsetcornersarced{\\pgfpoint{%s\\du}{%s\\du}}",
-					rad_buf, rad_buf);
-	pgf_rect(renderer,ul_corner,lr_corner,color,FALSE);
-	fprintf(renderer->file, "}");
-}
-
-static void 
-fill_rounded_rect(DiaRenderer *self, 
-			      Point *ul_corner, Point *lr_corner,
-			      Color *color, real radius)
-{
-	PgfRenderer *renderer = PGF_RENDERER(self);
-	gchar rad_buf[DTOSTR_BUF_SIZE];
-	pgf_dtostr(rad_buf, (gdouble) radius);
-	fprintf(renderer->file, "{\\pgfsetcornersarced{\\pgfpoint{%s\\du}{%s\\du}}",
-					rad_buf, rad_buf);
-	pgf_rect(renderer,ul_corner,lr_corner,color,TRUE);
-	fprintf(renderer->file, "}");
-}
-
-static void 
-draw_rounded_rect(DiaRenderer *self, 
-			      Point *ul_corner, Point *lr_corner,
-			      Color *fill, Color *stroke, real radius)
-{
-	if (fill)
-		fill_rounded_rect (self, ul_corner, lr_corner, fill, radius);
-	if (stroke)
-		stroke_rounded_rect (self, ul_corner, lr_corner, stroke, radius);
+      (filled?"fill":"draw"),
+      ulx_buf, uly_buf,
+      ulx_buf, lry_buf,
+      lrx_buf, lry_buf,
+      lrx_buf, uly_buf );
 }
 
 static void
-pgf_arc(PgfRenderer *renderer, 
-	     Point *center,
-	     real width, real height,
-	     real angle1, real angle2,
-	     Color *color,int filled)
+stroke_rounded_rect(DiaRenderer *self,
+            Point *ul_corner, Point *lr_corner,
+            Color *color, real radius)
+{
+  gchar rad_buf[DTOSTR_BUF_SIZE];
+
+  PgfRenderer *renderer = PGF_RENDERER(self);
+  pgf_dtostr(rad_buf, (gdouble) radius);
+  fprintf(renderer->file, "{\\pgfsetcornersarced{\\pgfpoint{%s\\du}{%s\\du}}",
+          rad_buf, rad_buf);
+  pgf_rect(renderer,ul_corner,lr_corner,color,FALSE);
+  fprintf(renderer->file, "}");
+}
+
+static void
+fill_rounded_rect(DiaRenderer *self,
+            Point *ul_corner, Point *lr_corner,
+            Color *color, real radius)
+{
+  PgfRenderer *renderer = PGF_RENDERER(self);
+  gchar rad_buf[DTOSTR_BUF_SIZE];
+  pgf_dtostr(rad_buf, (gdouble) radius);
+  fprintf(renderer->file, "{\\pgfsetcornersarced{\\pgfpoint{%s\\du}{%s\\du}}",
+          rad_buf, rad_buf);
+  pgf_rect(renderer,ul_corner,lr_corner,color,TRUE);
+  fprintf(renderer->file, "}");
+}
+
+static void
+draw_rounded_rect(DiaRenderer *self,
+            Point *ul_corner, Point *lr_corner,
+            Color *fill, Color *stroke, real radius)
+{
+  if (fill)
+    fill_rounded_rect (self, ul_corner, lr_corner, fill, radius);
+  if (stroke)
+    stroke_rounded_rect (self, ul_corner, lr_corner, stroke, radius);
+}
+
+static void
+pgf_arc(PgfRenderer *renderer,
+       Point *center,
+       real width, real height,
+       real angle1, real angle2,
+       Color *color,int filled)
 {
     double radius1,radius2;
     int ang1,ang2;
@@ -655,7 +655,7 @@ pgf_arc(PgfRenderer *renderer,
     gchar sqrt_buf[DTOSTR_BUF_SIZE];
     gchar angle1_buf[DTOSTR_BUF_SIZE];
     gchar angle2_buf[DTOSTR_BUF_SIZE];
-    
+
     radius1=(double) width/2.0;
     radius2=(double) height/2.0;
 
@@ -681,25 +681,25 @@ pgf_arc(PgfRenderer *renderer,
     if (!filled) {set_line_color(renderer,color);}
     else {set_fill_color(renderer,color);}
 
-   
+
     fprintf(renderer->file,"\\pgfpathmoveto{\\pgfpoint{%s\\du}{%s\\du}}\n",
-	    stx_buf, sty_buf);
+      stx_buf, sty_buf);
     fprintf(renderer->file,"\\pgfpatharc{%s}{%s}{%s\\du and %s\\du}\n",
-	    angle1_buf, angle2_buf,
-	    r1_buf, r2_buf);
-	    
+      angle1_buf, angle2_buf,
+      r1_buf, r2_buf);
+
     if (filled)
-	fprintf(renderer->file, "\\pgfusepath{fill}\n");
+  fprintf(renderer->file, "\\pgfusepath{fill}\n");
     else
-	fprintf(renderer->file, "\\pgfusepath{stroke}\n");
+  fprintf(renderer->file, "\\pgfusepath{stroke}\n");
 }
 
 static void
-draw_arc(DiaRenderer *self, 
-	 Point *center,
-	 real width, real height,
-	 real angle1, real angle2,
-	 Color *color)
+draw_arc(DiaRenderer *self,
+   Point *center,
+   real width, real height,
+   real angle1, real angle2,
+   Color *color)
 {
     PgfRenderer *renderer = PGF_RENDERER(self);
 
@@ -707,11 +707,11 @@ draw_arc(DiaRenderer *self,
 }
 
 static void
-fill_arc(DiaRenderer *self, 
-	 Point *center,
-	 real width, real height,
-	 real angle1, real angle2,
-	 Color *color)
+fill_arc(DiaRenderer *self,
+   Point *center,
+   real width, real height,
+   real angle1, real angle2,
+   Color *color)
 {
     PgfRenderer *renderer = PGF_RENDERER(self);
 
@@ -720,9 +720,9 @@ fill_arc(DiaRenderer *self,
 
 static void
 pgf_ellipse(PgfRenderer *renderer,
-		 Point *center,
-		 real width, real height,
-		 Color *color, gboolean filled)
+     Point *center,
+     real width, real height,
+     Color *color, gboolean filled)
 {
     gchar cx_buf[DTOSTR_BUF_SIZE];
     gchar cy_buf[DTOSTR_BUF_SIZE];
@@ -733,38 +733,38 @@ pgf_ellipse(PgfRenderer *renderer,
     else {set_fill_color(renderer,color);}
 
 /* "\\%sdraw (%s\\du,%s\\du) ellipse (%s\\du and %s\\du)\n", */
-    fprintf(renderer->file, 
-	    "\\pgfpathellipse{\\pgfpoint{%s\\du}{%s\\du}}"
-	                    "{\\pgfpoint{%s\\du}{0\\du}}"
-	                    "{\\pgfpoint{0\\du}{%s\\du}}\n"
-	    "\\pgfusepath{%s}\n",
-	    pgf_dtostr(cx_buf,center->x),
-	    pgf_dtostr(cy_buf,center->y),
-	    pgf_dtostr(width_buf,width/2.0),
-	    pgf_dtostr(height_buf,height/2.0),
-	    (filled?"fill":"stroke") );
+    fprintf(renderer->file,
+      "\\pgfpathellipse{\\pgfpoint{%s\\du}{%s\\du}}"
+                      "{\\pgfpoint{%s\\du}{0\\du}}"
+                      "{\\pgfpoint{0\\du}{%s\\du}}\n"
+      "\\pgfusepath{%s}\n",
+      pgf_dtostr(cx_buf,center->x),
+      pgf_dtostr(cy_buf,center->y),
+      pgf_dtostr(width_buf,width/2.0),
+      pgf_dtostr(height_buf,height/2.0),
+      (filled?"fill":"stroke") );
 }
 
 static void
-draw_ellipse(DiaRenderer *self, 
-	     Point *center,
-	     real width, real height,
-	     Color *fill, Color *stroke)
+draw_ellipse(DiaRenderer *self,
+       Point *center,
+       real width, real height,
+       Color *fill, Color *stroke)
 {
     PgfRenderer *renderer = PGF_RENDERER(self);
 
     if (fill)
-	pgf_ellipse(renderer,center,width,height,fill,TRUE);
+  pgf_ellipse(renderer,center,width,height,fill,TRUE);
     if (stroke)
-	pgf_ellipse(renderer,center,width,height,stroke,FALSE);
+  pgf_ellipse(renderer,center,width,height,stroke,FALSE);
 }
 
 static void
 pgf_bezier (PgfRenderer *renderer,
-	    BezPoint *points,
-	    gint numpoints,
-	    Color *fill, Color *stroke,
-	    gboolean closed)
+      BezPoint *points,
+      gint numpoints,
+      Color *fill, Color *stroke,
+      gboolean closed)
 {
     gint i;
     gchar p1x_buf[DTOSTR_BUF_SIZE];
@@ -775,54 +775,54 @@ pgf_bezier (PgfRenderer *renderer,
     gchar p3y_buf[DTOSTR_BUF_SIZE];
 
     if (fill)
-	set_fill_color(renderer,fill);
+  set_fill_color(renderer,fill);
     if (stroke)
-	set_line_color(renderer,stroke);
+  set_line_color(renderer,stroke);
 
     if (points[0].type != BEZ_MOVE_TO)
-	g_warning("first BezPoint must be a BEZ_MOVE_TO");
+  g_warning("first BezPoint must be a BEZ_MOVE_TO");
 
     for (i = 0; i < numpoints; i++)
-	switch (points[i].type) {
-	case BEZ_MOVE_TO:
-    	    fprintf(renderer->file, "\\pgfpathmoveto{\\pgfpoint{%s\\du}{%s\\du}}\n",
-		pgf_dtostr(p1x_buf,points[i].p1.x),
-		pgf_dtostr(p1y_buf,points[i].p1.y) );
-	    break;
-	case BEZ_LINE_TO:
-	    fprintf(renderer->file, "\\pgfpathlineto{\\pgfpoint{%s\\du}{%s\\du}}\n",
-		    pgf_dtostr(p1x_buf,points[i].p1.x),
-		    pgf_dtostr(p1y_buf,points[i].p1.y) );
-	    break;
-	case BEZ_CURVE_TO:
-	    fprintf(renderer->file, "\\pgfpathcurveto{\\pgfpoint{%s\\du}{%s\\du}}"
-	    "{\\pgfpoint{%s\\du}{%s\\du}}"
-	    "{\\pgfpoint{%s\\du}{%s\\du}}\n",
-		    pgf_dtostr(p1x_buf,points[i].p1.x),
-		    pgf_dtostr(p1y_buf,points[i].p1.y),
-		    pgf_dtostr(p2x_buf,points[i].p2.x),
-		    pgf_dtostr(p2y_buf,points[i].p2.y),
-		    pgf_dtostr(p3x_buf,points[i].p3.x),
-		    pgf_dtostr(p3y_buf,points[i].p3.y) );
-	    break;
-	}
+  switch (points[i].type) {
+  case BEZ_MOVE_TO:
+          fprintf(renderer->file, "\\pgfpathmoveto{\\pgfpoint{%s\\du}{%s\\du}}\n",
+    pgf_dtostr(p1x_buf,points[i].p1.x),
+    pgf_dtostr(p1y_buf,points[i].p1.y) );
+      break;
+  case BEZ_LINE_TO:
+      fprintf(renderer->file, "\\pgfpathlineto{\\pgfpoint{%s\\du}{%s\\du}}\n",
+        pgf_dtostr(p1x_buf,points[i].p1.x),
+        pgf_dtostr(p1y_buf,points[i].p1.y) );
+      break;
+  case BEZ_CURVE_TO:
+      fprintf(renderer->file, "\\pgfpathcurveto{\\pgfpoint{%s\\du}{%s\\du}}"
+      "{\\pgfpoint{%s\\du}{%s\\du}}"
+      "{\\pgfpoint{%s\\du}{%s\\du}}\n",
+        pgf_dtostr(p1x_buf,points[i].p1.x),
+        pgf_dtostr(p1y_buf,points[i].p1.y),
+        pgf_dtostr(p2x_buf,points[i].p2.x),
+        pgf_dtostr(p2y_buf,points[i].p2.y),
+        pgf_dtostr(p3x_buf,points[i].p3.x),
+        pgf_dtostr(p3y_buf,points[i].p3.y) );
+      break;
+  }
 
     if (closed)
-	fprintf(renderer->file, "\\pgfpathclose\n");
+  fprintf(renderer->file, "\\pgfpathclose\n");
     if (fill && stroke)
-	fprintf(renderer->file, "\\pgfusepath{fill,stroke}\n");
+  fprintf(renderer->file, "\\pgfusepath{fill,stroke}\n");
     else if (fill)
-	fprintf(renderer->file, "\\pgfusepath{fill}\n");
-/*	fill[fillstyle=solid,fillcolor=diafillcolor,linecolor=diafillcolor]}\n"); */
+  fprintf(renderer->file, "\\pgfusepath{fill}\n");
+/*  fill[fillstyle=solid,fillcolor=diafillcolor,linecolor=diafillcolor]}\n"); */
     else if (stroke)
-	fprintf(renderer->file, "\\pgfusepath{stroke}\n");
+  fprintf(renderer->file, "\\pgfusepath{stroke}\n");
 }
 
 static void
-draw_bezier(DiaRenderer *self, 
-	    BezPoint *points,
-	    int numpoints, /* numpoints = 4+3*n, n=>0 */
-	    Color *color)
+draw_bezier(DiaRenderer *self,
+      BezPoint *points,
+      int numpoints, /* numpoints = 4+3*n, n=>0 */
+      Color *color)
 {
     PgfRenderer *renderer = PGF_RENDERER(self);
 
@@ -832,18 +832,18 @@ draw_bezier(DiaRenderer *self,
 
 
 static void
-draw_beziergon (DiaRenderer *self, 
-		BezPoint *points,
-		int numpoints,
-		Color *fill,
-		Color *stroke)
+draw_beziergon (DiaRenderer *self,
+    BezPoint *points,
+    int numpoints,
+    Color *fill,
+    Color *stroke)
 {
     PgfRenderer *renderer = PGF_RENDERER(self);
 
     pgf_bezier(renderer,points,numpoints,fill,stroke,TRUE);
 }
 
-static int 
+static int
 set_arrows(PgfRenderer *renderer, Arrow *start_arrow, Arrow *end_arrow)
 {
     int modified = 2|1; /*=3*/
@@ -865,7 +865,7 @@ set_arrows(PgfRenderer *renderer, Arrow *start_arrow, Arrow *end_arrow)
        modified ^= 2;
     }
     if (modified & 2) start_arrow->type = ARROW_NONE;
-    
+
     switch (end_arrow->type)
     {
     case ARROW_NONE:
@@ -883,12 +883,12 @@ set_arrows(PgfRenderer *renderer, Arrow *start_arrow, Arrow *end_arrow)
        modified ^= 1;
     }
     if (modified & 1) end_arrow->type = ARROW_NONE;
-    
+
     return modified; /* =0 if no native arrow is used */
 }
 
-static void 
-draw_line_with_arrows(DiaRenderer *self, Point *start, Point *end, 
+static void
+draw_line_with_arrows(DiaRenderer *self, Point *start, Point *end,
                                   real line_width, Color *line_color,
                                   Arrow *start_arrow, Arrow *end_arrow)
 {
@@ -898,15 +898,15 @@ draw_line_with_arrows(DiaRenderer *self, Point *start, Point *end,
     PgfRenderer *renderer = PGF_RENDERER(self);
 
     if (start_arrow != NULL) {
-	st_arrow = *start_arrow;
+  st_arrow = *start_arrow;
     } else {
-	st_arrow.type = ARROW_NONE;
+  st_arrow.type = ARROW_NONE;
     }
 
     if (end_arrow != NULL) {
-	e_arrow = *end_arrow;
+  e_arrow = *end_arrow;
     } else {
-	e_arrow.type = ARROW_NONE;
+  e_arrow.type = ARROW_NONE;
     }
     fprintf(renderer->file, "{\n");
     set_fill_color(renderer, line_color);
@@ -922,10 +922,10 @@ draw_line_with_arrows(DiaRenderer *self, Point *start, Point *end,
     {
       orig_draw_line_with_arrows(self, start, end, line_width, line_color, &st_arrow, &e_arrow);
     }
-    
+
 }
 
-static void 
+static void
 draw_arc_with_arrows(DiaRenderer *self, Point *start, Point *end, Point *midpoint,
                                  real line_width, Color *color,
                                  Arrow *start_arrow, Arrow *end_arrow)
@@ -936,15 +936,15 @@ draw_arc_with_arrows(DiaRenderer *self, Point *start, Point *end, Point *midpoin
     PgfRenderer *renderer = PGF_RENDERER(self);
 
     if (start_arrow != NULL) {
-	st_arrow = *start_arrow;
+  st_arrow = *start_arrow;
     } else {
-	st_arrow.type = ARROW_NONE;
+  st_arrow.type = ARROW_NONE;
     }
 
     if (end_arrow != NULL) {
-	e_arrow = *end_arrow;
+  e_arrow = *end_arrow;
     } else {
-	e_arrow.type = ARROW_NONE;
+  e_arrow.type = ARROW_NONE;
     }
 
     fprintf(renderer->file, "{\n");
@@ -961,7 +961,7 @@ draw_arc_with_arrows(DiaRenderer *self, Point *start, Point *end, Point *midpoin
     }
 }
 
-static void 
+static void
 draw_polyline_with_arrows(DiaRenderer *self, Point *points, int num_points,
                                      real line_width, Color *color,
                                      Arrow *start_arrow, Arrow *end_arrow)
@@ -972,15 +972,15 @@ draw_polyline_with_arrows(DiaRenderer *self, Point *points, int num_points,
     PgfRenderer *renderer = PGF_RENDERER(self);
 
     if (start_arrow != NULL) {
-	st_arrow = *start_arrow;
+  st_arrow = *start_arrow;
     } else {
-	st_arrow.type = ARROW_NONE;
+  st_arrow.type = ARROW_NONE;
     }
 
     if (end_arrow != NULL) {
-	e_arrow = *end_arrow;
+  e_arrow = *end_arrow;
     } else {
-	e_arrow.type = ARROW_NONE;
+  e_arrow.type = ARROW_NONE;
     }
 
     fprintf(renderer->file, "{\n");
@@ -997,10 +997,10 @@ draw_polyline_with_arrows(DiaRenderer *self, Point *points, int num_points,
     }
 }
 
-static void 
-draw_rounded_polyline_with_arrows(DiaRenderer *self, 
-                                     Point *points, int num_points, real line_width, Color *color, 
-				     Arrow *start_arrow, Arrow *end_arrow, real radius)
+static void
+draw_rounded_polyline_with_arrows(DiaRenderer *self,
+                                     Point *points, int num_points, real line_width, Color *color,
+             Arrow *start_arrow, Arrow *end_arrow, real radius)
 {
     int nat_arr;
     Arrow st_arrow;
@@ -1008,15 +1008,15 @@ draw_rounded_polyline_with_arrows(DiaRenderer *self,
     PgfRenderer *renderer = PGF_RENDERER(self);
 
     if (start_arrow != NULL) {
-	st_arrow = *start_arrow;
+  st_arrow = *start_arrow;
     } else {
-	st_arrow.type = ARROW_NONE;
+  st_arrow.type = ARROW_NONE;
     }
 
     if (end_arrow != NULL) {
-	e_arrow = *end_arrow;
+  e_arrow = *end_arrow;
     } else {
-	e_arrow.type = ARROW_NONE;
+  e_arrow.type = ARROW_NONE;
     }
 
     fprintf(renderer->file, "{\n");
@@ -1024,18 +1024,18 @@ draw_rounded_polyline_with_arrows(DiaRenderer *self,
     nat_arr = set_arrows(renderer, &st_arrow, &e_arrow);
     if (nat_arr != 0)
     {
-      orig_draw_rounded_polyline_with_arrows(self, points, num_points, 
+      orig_draw_rounded_polyline_with_arrows(self, points, num_points,
                      line_width, color, NULL, NULL, radius);
     }
     fprintf(renderer->file, "}\n");
     if (nat_arr != 3)
     {
-      orig_draw_rounded_polyline_with_arrows(self, points, num_points, 
+      orig_draw_rounded_polyline_with_arrows(self, points, num_points,
                      line_width, color, &st_arrow, &e_arrow, radius);
     }
 }
 
-static void 
+static void
 draw_bezier_with_arrows(DiaRenderer *self, BezPoint *points, int num_points,
                                    real line_width, Color *color,
                                    Arrow *start_arrow, Arrow *end_arrow)
@@ -1046,15 +1046,15 @@ draw_bezier_with_arrows(DiaRenderer *self, BezPoint *points, int num_points,
     PgfRenderer *renderer = PGF_RENDERER(self);
 
     if (start_arrow != NULL) {
-	st_arrow = *start_arrow;
+  st_arrow = *start_arrow;
     } else {
-	st_arrow.type = ARROW_NONE;
+  st_arrow.type = ARROW_NONE;
     }
 
     if (end_arrow != NULL) {
-	e_arrow = *end_arrow;
+  e_arrow = *end_arrow;
     } else {
-	e_arrow.type = ARROW_NONE;
+  e_arrow.type = ARROW_NONE;
     }
 
     fprintf(renderer->file, "{\n");
@@ -1075,7 +1075,7 @@ draw_bezier_with_arrows(DiaRenderer *self, BezPoint *points, int num_points,
 
 
 
-/* Do we really want to do this?  What if the text is intended as 
+/* Do we really want to do this?  What if the text is intended as
  * TeX text?  Jacek says leave it as a TeX string.  TeX uses should know
  * how to escape stuff anyway.  Later versions will get an export option.
  *
@@ -1091,29 +1091,29 @@ tex_escape_string(const gchar *src, DiaContext *ctx)
     gchar *p;
 
     if (!g_utf8_validate(src, -1, NULL)) {
-	dia_context_add_message(ctx, _("Not valid UTF-8"));
-	return g_strdup(src);
+  dia_context_add_message(ctx, _("Not valid UTF-8"));
+  return g_strdup(src);
     }
 
     p = (char *) src;
     while (*p != '\0') {
-	switch (*p) {
-	case '%': g_string_append(dest, "\\%"); break;
-	case '#': g_string_append(dest, "\\#"); break;
-	case '$': g_string_append(dest, "\\$"); break;
-	case '&': g_string_append(dest, "\\&"); break;
-	case '~': g_string_append(dest, "\\~{}"); break;
-	case '_': g_string_append(dest, "\\_"); break;
-	case '^': g_string_append(dest, "\\^{}"); break;
-	case '\\': g_string_append(dest, "\\ensuremath{\\backslash}"); break;
-	case '{': g_string_append(dest, "\\{"); break;
-	case '}': g_string_append(dest, "\\}"); break;
-	case '[': g_string_append(dest, "\\ensuremath{[}"); break;
-	case ']': g_string_append(dest, "\\ensuremath{]}"); break;
-	default: 
+  switch (*p) {
+  case '%': g_string_append(dest, "\\%"); break;
+  case '#': g_string_append(dest, "\\#"); break;
+  // case '$': g_string_append(dest, "\\$"); break;
+  // case '&': g_string_append(dest, "\\&"); break;
+  // case '~': g_string_append(dest, "\\~{}"); break;
+  // case '_': g_string_append(dest, "\\_"); break;
+  // case '^': g_string_append(dest, "\\^{}"); break;
+  // case '\\': g_string_append(dest, "\\ensuremath{\\backslash}"); break;
+  // case '{': g_string_append(dest, "\\{"); break;
+  // case '}': g_string_append(dest, "\\}"); break;
+  // case '[': g_string_append(dest, "\\ensuremath{[}"); break;
+  // case ']': g_string_append(dest, "\\ensuremath{]}"); break;
+  default:
             /* if we really have utf8 append the whole 'glyph' */
             g_string_append_len(dest, p, g_utf8_skip[(unsigned char)*p]);
-	}
+  }
         p = g_utf8_next_char(p);
     }
 
@@ -1124,9 +1124,9 @@ tex_escape_string(const gchar *src, DiaContext *ctx)
 
 static void
 draw_string(DiaRenderer *self,
-	    const char *text,
-	    Point *pos, Alignment alignment,
-	    Color *color)
+      const char *text,
+      Point *pos, Alignment alignment,
+      Color *color)
 {
     PgfRenderer *renderer = PGF_RENDERER(self);
     gchar *escaped = tex_escape_string(text, renderer->ctx);
@@ -1139,30 +1139,30 @@ draw_string(DiaRenderer *self,
     fprintf(renderer->file,"\\node");
     switch (alignment) {
     case ALIGN_LEFT:
-	fprintf(renderer->file,
-		"[anchor=base west,inner sep=0pt,outer sep=0pt,color=dialinecolor]");
-	break;
+  fprintf(renderer->file,
+    "[anchor=base west,inner sep=0pt,outer sep=0pt,color=dialinecolor]");
+  break;
     case ALIGN_CENTER:
-	fprintf(renderer->file,
-		"[anchor=base,inner sep=0pt, outer sep=0pt,color=dialinecolor]");
-	break;
+  fprintf(renderer->file,
+    "[anchor=base,inner sep=0pt, outer sep=0pt,color=dialinecolor]");
+  break;
     case ALIGN_RIGHT:
-	fprintf(renderer->file,
-		"[anchor=base east,inner sep=0pt, outer sep=0pt,color=dialinecolor]");
-	break;
+  fprintf(renderer->file,
+    "[anchor=base east,inner sep=0pt, outer sep=0pt,color=dialinecolor]");
+  break;
     }
     fprintf(renderer->file," at (%s\\du,%s\\du){%s};\n",
-	    pgf_dtostr(px_buf,pos->x),
-	    pgf_dtostr(py_buf,pos->y),
-	    escaped);
+      pgf_dtostr(px_buf,pos->x),
+      pgf_dtostr(py_buf,pos->y),
+      escaped);
     g_free(escaped);
 }
 
 static void
 draw_image(DiaRenderer *self,
-	   Point *point,
-	   real width, real height,
-	   DiaImage *image)
+     Point *point,
+     real width, real height,
+     DiaImage *image)
 {
     PgfRenderer *renderer = PGF_RENDERER(self);
 
@@ -1172,8 +1172,8 @@ draw_image(DiaRenderer *self,
 /* --- export filter interface --- */
 static gboolean
 export_pgf(DiagramData *data, DiaContext *ctx,
-	   const gchar *filename, const gchar *diafilename,
-	   void* user_data)
+     const gchar *filename, const gchar *diafilename,
+     void* user_data)
 {
     PgfRenderer *renderer;
     FILE *file;
@@ -1183,13 +1183,13 @@ export_pgf(DiagramData *data, DiaContext *ctx,
     gchar scale2_buf[DTOSTR_BUF_SIZE];
 
     Color initial_color;
- 
+
     file = g_fopen(filename, "wb");
 
     if (file == NULL) {
-	dia_context_add_message_with_errno (ctx, errno, _("Can't open output file %s"), 
-					    dia_context_get_filename(ctx));
-	return FALSE;
+  dia_context_add_message_with_errno (ctx, errno, _("Can't open output file %s"),
+              dia_context_get_filename(ctx));
+  return FALSE;
     }
 
     renderer = g_object_new(PGF_TYPE_RENDERER, NULL);
@@ -1200,32 +1200,32 @@ export_pgf(DiagramData *data, DiaContext *ctx,
 
     time_now  = time(NULL);
     name = g_get_user_name();
-  
+
     fprintf(file,
-	"%% Graphic for TeX using PGF\n"
-	"%% Title: %s\n"
-	"%% Creator: Dia v%s\n"
-	"%% CreationDate: %s"
-	"%% For: %s\n"
-	"%% \\usepackage{tikz}\n"
-	"%% The following commands are not supported in PSTricks at present\n"
-	"%% We define them conditionally, so when they are implemented,\n"
-	"%% this pgf file will use them.\n"
-	
-	"\\ifx\\du\\undefined\n"
-  	"  \\newlength{\\du}\n"
-	"\\fi\n"
-	"\\setlength{\\du}{15\\unitlength}\n"
-	"\\begin{tikzpicture}[even odd rule]\n",
-	diafilename,
-	VERSION,
-	ctime(&time_now),
-	name);
+  "%% Graphic for TeX using PGF\n"
+  "%% Title: %s\n"
+  "%% Creator: Dia v%s\n"
+  "%% CreationDate: %s"
+  "%% For: %s\n"
+  "%% \\usepackage{tikz}\n"
+  "%% The following commands are not supported in PSTricks at present\n"
+  "%% We define them conditionally, so when they are implemented,\n"
+  "%% this pgf file will use them.\n"
+
+  "\\ifx\\du\\undefined\n"
+    "  \\newlength{\\du}\n"
+  "\\fi\n"
+  "\\setlength{\\du}{15\\unitlength}\n"
+  "\\begin{tikzpicture}[even odd rule]\n",
+  diafilename,
+  VERSION,
+  ctime(&time_now),
+  name);
 
     fprintf(renderer->file,"\\pgftransformxscale{%s}\n"
-	                   "\\pgftransformyscale{%s}\n",
-	    pgf_dtostr(scale1_buf,data->paper.scaling),
-	    pgf_dtostr(scale2_buf,-data->paper.scaling) );
+                     "\\pgftransformyscale{%s}\n",
+      pgf_dtostr(scale1_buf,data->paper.scaling),
+      pgf_dtostr(scale2_buf,-data->paper.scaling) );
 
     initial_color.red=0.;
     initial_color.green=0.;
